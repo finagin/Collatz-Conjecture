@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+    <title>Гипотеза Коллатца</title>
+
+    <style type="text/css">
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #mynetwork {
+            width: 100vw;
+            height: 100vh;
+            border: 0;
+        }
+    </style>
+
+    <script type="text/javascript" src="http://visjs.org/dist/vis.js"></script>
+    <link href="http://visjs.org/dist/vis-network.min.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript">
+        window.query = {};
+        location.search
+            .replace('?', '')
+            .split('&')
+            .forEach(function (item) {
+                    var a = item.split('=');
+
+                    this[a[0]] = a[1] || true;
+                }, query
+            );
+
+        var network = null;
+        var layoutMethod = "directed";
+
+        function f(n) {
+            n = query.count || n;
+            var nodes = [],
+                edges = [],
+                items = [];
+
+            for (var c = 1; c < n; c++) {
+                var curr = c;
+
+                while (!items[curr]) {
+                    next = curr % 2 ? curr * 3 + 1 : curr / 2;
+                    items[curr] = next;
+
+                    nodes.push({id: curr, label: '' + curr});
+                    edges.push({from: curr, to: next});
+                    curr = next;
+                }
+            }
+
+            return {
+                nodes: nodes,
+                edges: edges.sort(function (a, b) {
+                    return a.from - b.from;
+                })
+            };
+
+        }
+
+        function destroy() {
+            if (network !== null) {
+                network.destroy();
+                network = null;
+            }
+        }
+
+        function draw() {
+            destroy();
+
+            // create a network
+            var container = document.getElementById('mynetwork');
+            var data = f(15);
+
+            var options = {
+                layout: {
+                    hierarchical: {
+                        sortMethod: layoutMethod
+                    }
+                },
+                edges: {
+                    smooth: true,
+                    arrows: {to: true}
+                }
+            };
+            network = new vis.Network(container, data, options);
+        }
+    </script>
+</head>
+<body onload="draw();">
+<div id="mynetwork"></div>
+</body>
+</html>
+
