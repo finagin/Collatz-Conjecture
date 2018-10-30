@@ -18,7 +18,8 @@
     </style>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/almende/vis@4.21.0/dist/vis.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/gh/almende/vis@4.21.0/dist/vis-network.min.css" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/gh/almende/vis@4.21.0/dist/vis-network.min.css" rel="stylesheet"
+          type="text/css"/>
 
     <script type="text/javascript">
         window.query = {};
@@ -41,8 +42,21 @@
                 edges = [],
                 items = [];
 
-            for (var c = 1; c < n; c++) {
-                var curr = c;
+            if (query.each) {
+                for (var c = 1; c < n; c++) {
+                    var curr = c;
+
+                    while (!items[curr]) {
+                        next = curr % 2 ? curr * 3 + 1 : curr / 2;
+                        items[curr] = next;
+
+                        nodes.push({id: curr, label: '' + curr});
+                        edges.push({from: curr, to: next});
+                        curr = next;
+                    }
+                }
+            } else {
+                var curr = n;
 
                 while (!items[curr]) {
                     next = curr % 2 ? curr * 3 + 1 : curr / 2;
